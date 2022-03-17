@@ -19,33 +19,31 @@ fetch('http://localhost:3000/api/products')
         let h3 = document.createElement('h3')
         let article = document.createElement('article')
         h3.innerText = canape.name
-        h3.className += 'productName'
+        h3.className = 'productName'
         
-        items.appendChild(article)
+        
         article.appendChild(h3)
 
-        function display_image(src, width, height, alt) {
+        
             let img = document.createElement('img')
             img.src = canape.imageUrl
-            img.width = 100
-            img.height = 100 
             img.alt = canape.altTxt
 
         article.appendChild(img)
         
-        }
-        display_image('img', 100, 110,'ssdqd')
-
+    
+       
         let p =document.createElement('p')
         p.innerText = canape.description
-        p.className +='productDescription'
+        p.className ='productDescription'
 
         article.appendChild(p)
 
         let a = document.createElement('a')
-        const lien = document.querySelector("article")
-        a.href ="product.html?id=canape._id"
+        a.href ="product.html?id=" + canape._id
         a.appendChild(article)
+        items.appendChild(a)
+        
 
      
     

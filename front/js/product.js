@@ -1,4 +1,8 @@
-fetch('http://localhost:3000/api/products')
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const id = urlParams.get('id')
+fetch('http://localhost:3000/api/products/' + id)
 
 .then(function(res) {
     if(res.ok) { 
@@ -7,21 +11,17 @@ fetch('http://localhost:3000/api/products')
     }
 })
 
-.then(function (canapes) {
-    console.log(canapes)
-    canapes.forEach(function (canape) { 
+.then(function (canape) {
         console.log(canape.name) 
         console.log(canape.price)
         console.log(canape.imageUrl)
         console.log(canape.description)
         console.log(canape._id)
-
-        let items = document.getElementById('items')
         
-
-        let price = document.createElement('price')
-        price.className = 'price'
-        price.innerText = canape.price
-        items.appendChild(price)
-    })
+        
+        var img = document.createElement("img");
+        img.src = canape.imageUrl;
+    
+        var div = document.getElementById("item__img").appendChild(img)
+       
 })
