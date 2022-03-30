@@ -1,4 +1,3 @@
-
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id = urlParams.get('id')
@@ -36,41 +35,64 @@ fetch('http://localhost:3000/api/products/' + id)
        
         let select = document.getElementById('colors')
        
-       
-    canape.colors.forEach((couleur)=> {
+    canape.colors.forEach((couleur) => {
     let option = document.createElement('option')
 
-    option.innerHTML=`${couleur}`
-    option.value=`${couleur}`
-    select.appendChild(option)
+        option.innerHTML = couleur
+        option.value     = couleur
+        select.appendChild(option)
            
-        });
+    });
        
-
-var input = document.getElementById('quantity');
-var n = input.value;
-n = Number(n);
-if (n < 0) {
-    alert('Choisir quantitée entre 0-100');
-    input.value = 0;
-} else if (n > 100) {
-    alert('Choisir quantitée entre 0-100');
-    input.value = 100;
-}
 
     let addToCart = document.getElementById("addToCart")
     console.log(addToCart)
-    addToCart.addEventListener("click", () => {
+    addToCart.addEventListener("click", () => { //function() { }
+
+        let quantityInput = document.getElementById('quantity');
         let select = document.getElementById("colors")
-        console.log(select.value)
-        localStorage.setItem("canape", canape._id)
-        localStorage.setItem("canape", canape.name)
-        localStorage.setItem("canape", canape.price)
+        if(quantityInput.value > 100 || quantityInput.value <= 0) {
+            alert('Choisir quantitée entre 1-100');
+            return;
+        }
+
+        if(select.value === '') {
+            alert('Veuillez choisir une couleur');
+            return;
+        }
+
+        /*
+        * 1. on veut ajouter une ligne au panier
+        * le panier étant le localStorage
+        * et pour chaque ligne il faut connaitre la quanbtité, la couleur et le canape (_id)
+         */
+
+        const kanap = canape._id + '_' + select.value;
+        
+
+        let ligne_de_panier = localStorage.getItem(kanap);
+        if(ligne_de_panier === null) {
+            let nouvelle_ligne_de_panier = {
+                id: canape._id,
+                couleur:  select.value,
+                quantite: parseInt(quantityInput.value)
+                
+            }
+
+            localStorage.setItem(kanap, JSON.stringify(nouvelle_ligne_de_panier));
+        } else {
+            //string '1' + '1' = '11'
+            //integer 1 + 1 = 2
+            ligne_de_panier = JSON.parse(ligne_de_panier)
+            ligne_de_panier.quantite += parseInt(quantityInput.value)
+
+            localStorage.setItem("kanap", JSON.stringify(ligne_de_panier))
+        }
+
 
     })
    
-
-
 })
+    
                
         
