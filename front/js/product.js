@@ -28,7 +28,7 @@ fetch('http://localhost:3000/api/products/' + id)
         titre.innerHTML = canape.name
 
         var prix = document.getElementById('price')
-        price.innerHTML = canape.price
+        prix.innerHTML = canape.price
 
         var description = document.getElementById('description')
         description.innerHTML = canape.description
@@ -73,7 +73,7 @@ fetch('http://localhost:3000/api/products/' + id)
         let ligne_de_panier = localStorage.getItem(kanap);
         if(ligne_de_panier === null) {
             let nouvelle_ligne_de_panier = {
-                id: canape._id,
+                id :canape._id,
                 couleur:  select.value,
                 quantite: parseInt(quantityInput.value)
                 
@@ -86,7 +86,7 @@ fetch('http://localhost:3000/api/products/' + id)
             ligne_de_panier = JSON.parse(ligne_de_panier)
             ligne_de_panier.quantite += parseInt(quantityInput.value)
 
-            localStorage.setItem("kanap", JSON.stringify(ligne_de_panier))
+            localStorage.setItem(kanap, JSON.stringify(ligne_de_panier))
         }
 
 
