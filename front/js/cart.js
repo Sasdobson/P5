@@ -32,6 +32,7 @@
         article.className = 'cart__item'
         article.dataset.id = canape._id
         article.dataset.color = ligne_de_panier.couleur
+        article.id= key
         section.appendChild(article)
 
         let Conteneur0 = document.createElement("div")
@@ -78,8 +79,14 @@
         qty.min = "1"
         qty.name = "itemQuantity"
         qty.ligne_de_panier_key = key
-        totalQty += ligne_de_panier.quantite
-        qty.addEventListener("change", updateQty)
+         qty.price = canape.price
+
+         qty.dataset.ligne_de_panier_key = key
+         qty.dataset.price = canape.price
+
+
+        //totalQty += ligne_de_panier.quantite
+        //qty.addEventListener("change", updateQty)
 
         Conteneur3.appendChild(qte)
         Conteneur3.appendChild(qty)
@@ -125,35 +132,25 @@
             
     //  })
         
-        //  totalPrice += canape.price * ligne_de_panier.quantite
-        //  totalQty += ligne_de_panier.quantite
+          totalPrice += canape.price * ligne_de_panier.quantite
+          totalQty += ligne_de_panier.quantite
  
-        //  document.getElementById('totalQuantity').innerText = totalQty
-        //  document.getElementById('totalPrice').innerText = totalPrice
+          document.getElementById('totalQuantity').innerText = totalQty
+          document.getElementById('totalPrice').innerText = totalPrice
  
      });
  }
 
- function updateQty(event) {
+
+ function updateAll(event){
+
      let input = event.target
-     let value = input.value
-     let key = input.ligne_de_panier_key;
-     // console.log(input.key)
-     //console.log(value)
-     let panier = JSON.parse(localStorage.getItem(key));
+     let key   = input.ligne_de_panier_key;
 
-     panier.quantite = parseInt(value)
-     //1 + 1 = 2
-     //"1" + 1 = "11"
+     let ligne_de_panier = JSON.parse(localStorage.getItem(key));
+     ligne_de_panier.quantite = input.valueAsNumber
+     localStorage.setItem(key, JSON.stringify(ligne_de_panier))
 
-     localStorage.setItem(key, JSON.stringify(panier))
-     document.getElementById('totalQuantity').innerText = totalQty
-    
-     //mettre a jour le calcul et l'affichage des totaux
- }
- function updateAll(){
-    let key = localStorage.key(i)
-    let canape = JSON.parse(localStorage.getItem(key.price))
     var elemsQty = document.getElementsByClassName('itemQuantity');
     var myLength = elemsQty.length,
     totalQty = 0;
@@ -164,17 +161,22 @@
     
     let productTotalQuantity = document.getElementById('totalQuantity');
     productTotalQuantity.innerHTML = totalQty;
-    
+
     totalPrice = 0;
     for (var i = 0; i < myLength; ++i) {
-        totalPrice += (elemsQty[i].valueAsNumber * canape);
+        totalPrice += (elemsQty[i].valueAsNumber * elemsQty[i].price);
     }
 
     let productTotalPrice = document.getElementById('totalPrice');
     productTotalPrice.innerHTML = totalPrice;
+
+     console.log('updateAll')
 }
 
-
+/**
+ * supprime une ligne du panier en localstorage et du DOM HTML
+ * @param event
+ */
  function supprimerLigne(event)
 {
     let input = event.target
@@ -186,27 +188,28 @@
 
     //mettre a jour le calcul et l'affichage des totaux
 }
-function Form() {
-    
-    let form = document.querySelector(".cart__order__form");
 
-    
+function postForm() {
+    const order = document.getElementById('order');
+    order.addEventListener('click', (order) => {
+  
+    let form = document.querySelector(".cart__order__form");
     let emailRegExp = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
     let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
     let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-    form.firstName.addEventListener('change', function() {
+    form.firstName.addEventListener(function() {
         validFirstName(this);
     });
-    form.lastName.addEventListener('change', function() {
+    form.lastName.addEventListener(function() {
         validLastName(this);
     });
-    form.address.addEventListener('change', function() {
+    form.address.addEventListener(function() {
         validAddress(this);
     });
-    form.city.addEventListener('change', function() {
+    form.city.addEventListener(function() {
         validCity(this);
     });
-    form.email.addEventListener('change', function() {
+    form.email.addEventListener(function() {
         validEmail(this);
     });
     const validFirstName = function(inputFirstName) {
@@ -256,25 +259,94 @@ function Form() {
             emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
         }
     };
+    
+        const contact = {
+          firstName : document.getElementById('firstName').value,
+          lastName : document.getElementById('lastName').value,
+          address : document.getElementById('address').value,
+          city : document.getElementById('city').value,
+          email : document.getElementById('email').value
+        }
+        let key = id
+        let ligne_de_panier = JSON.parse(localStorage.getItem(key));
+       
+        let products = [];
+        for (let i = 0; i<ligne_de_panierpanier.length;i++) {
+            products.push(ligne_de_panier[i].id);
+        }
+        console.log(products)
+  
+        fetch("http://localhost:3000/api/products/order", options)
+        localStorage.setItem('orderId', data.orderId);
+        document.location.href = 'confirmation.html?id='+ data.orderId;
+
+        let sendForm= {
+          contact,
+          products,
+        }
+      
+        let options = {
+          method: 'POST',
+          body: JSON.stringify(sendForm),
+          headers: {
+            'content-type': 'application/json',
+
+        }
+        }
+        .then(Response => {
+            console.log(Response)
+        })
+  
+        })
     }
+  
+
+
+/**
+ * RESTE A FAIRE DU 13 Avril
+ * Sur click du bouton COmmande (id="order")
+ * Verifier que tous les champs sont valides comme tu la fais au change mais sur cet event
+ * Si tout est OK
+ * Faire une requete api POST /api/order avec les paramètres suivants
+ *
+ * /**
+ *  *
+ *  * Expects request to contain:
+ *  * contact: {
+ *  *   firstName: string,
+ *  *   lastName: string,
+ *  *   address: string,
+ *  *   city: string,
+ *  *   email: string
+ *  * }
+ *  * products: [string] <-- array of product _id
+ *  *
+ *
+ *  L'appel api va te retourner un orderId qu'il faut récuperer
+ *  Vider le panier
+ *  Rediriger l'utilisation vers confirmation.html?orderId=......
+ *  Afficher l'orderId dynamiquement
+ *
+ *
+ */
+
 
 //  document.getElementById('cart') //retourne un element
 //  document.getElementsByClassName() //retourne un tableau d'élement
 //  document.querySelector('article .banniere #cart') //retourne un element (le premier résultat) ou null
 //  document.querySelectorAll()  //retourne un tableau d'élement
  
- /**
-  * RESTE A FAIRE
-  * Modification de la quantité
-  * Suppression
-  *
-  * Il faut attacher un eventListener a l'input quantité et a la balise p supprimer
-  * Au changement de la quantité
-  * - mettre à jour le localstorage (pour garde ton panier à jour)
-  * - calculer/mettre à jour le prix total et la quantité total sur la page
-  *
-  * A la suppression
-  * - supprimer la ligne du panier du localStorage
-  * - supprimer la balise html article
-  * - calculer/mettre à jour le prix total et la quantité total sur la page
-  */
+ 
+//   * RESTE A FAIRE
+//   * Modification de la quantité
+//   * Suppression
+//   *
+//   * Il faut attacher un eventListener a l'input quantité et a la balise p supprimer
+//   * Au changement de la quantité
+//   * - mettre à jour le localstorage (pour garde ton panier à jour)
+//   * - calculer/mettre à jour le prix total et la quantité total sur la page
+//   *
+//   * A la suppression
+//   * - supprimer la ligne du panier du localStorage
+//   * - supprimer la balise html article
+//   * - calculer/mettre à jour le prix total et la quantité total sur la page
