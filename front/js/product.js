@@ -61,11 +61,6 @@ fetch('http://localhost:3000/api/products/' + id)
             return;
         }
 
-        /*
-        * 1. on veut ajouter une ligne au panier
-        * le panier étant le localStorage
-        * et pour chaque ligne il faut connaitre la quanbtité, la couleur et le canape (_id)
-         */
 
         const kanap = canape._id + '_' + select.value;
         
@@ -88,7 +83,7 @@ fetch('http://localhost:3000/api/products/' + id)
 
             localStorage.setItem(kanap, JSON.stringify(ligne_de_panier))
         }
-
+        alert("Ajouté au panier !")
 
     })
    
